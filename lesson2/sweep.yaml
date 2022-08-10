@@ -22,8 +22,6 @@ parameters:
     epochs:
       min: 5
       max: 20
-    fc_layers:
-      values: [1, 2]
     fc_neurons:
       min: 32
       max: 512
