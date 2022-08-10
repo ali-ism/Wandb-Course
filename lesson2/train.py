@@ -57,9 +57,12 @@ def load_data(cfg):
 
 class Model(pl.LightningModule):
 
-    def __init__(self, cfg, dataset):
+    def __init__(self, cfg, dataset, train_dataset, val_dataset, test_dataset):
         super().__init__()
         self.cfg = cfg
+        self.train_dataset = train_dataset
+        self.val_dataset = val_dataset
+        self.test_dataset = test_dataset
         num_classes = len(set(dataset.targets))
         self.f1_score = F1Score(num_classes=num_classes, average='macro')
         self.class_weights = torch.Tensor(compute_class_weight(class_weight='balanced',
@@ -121,13 +124,13 @@ class Model(pl.LightningModule):
         return torch.optim.Adam(self.parameters(), lr=self.cfg.lr)
 
     def train_dataloader(self):
-        return DataLoader(train_dataset, batch_size=self.cfg.batch_size, num_workers=2)
+        return DataLoader(self.train_dataset, batch_size=self.cfg.batch_size, num_workers=2)
 
     def val_dataloader(self):
-        return DataLoader(val_dataset, batch_size=self.cfg.batch_size, num_workers=2)
+        return DataLoader(self.val_dataset, batch_size=self.cfg.batch_size, num_workers=2)
 
     def test_dataloader(self):
-        return DataLoader(test_dataset, batch_size=self.cfg.batch_size, num_workers=2)
+        return DataLoader(self.test_dataset, batch_size=self.cfg.batch_size, num_workers=2)
 
       
 def train(cfg):
