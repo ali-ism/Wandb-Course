@@ -27,3 +27,7 @@ parameters:
       distribution: int_uniform
       min: 32
       max: 512
+    epochs:
+      distribution: int_uniform
+      min: 2
+      max: 8
