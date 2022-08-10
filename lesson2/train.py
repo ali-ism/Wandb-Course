@@ -68,19 +68,24 @@ class Model(pl.LightningModule):
                                                                y=dataset.targets))
         
         if cfg.arch == 'resnet':
-            self.net = resnet18(weights='DEFAULT')
-            self.net.fc = nn.Linear(cfg.fc_neurons, num_classes)
+            self.net = resnet18('DEFAULT')
+            self.net.fc = nn.Linear(512, cfg.fc_neurons)
         elif cfg.arch == 'mobilenet':
-            self.net = mobilenet_v3_small(weights='DEFAULT')
-            self.net.classifier[-1] = nn.Linear(cfg.fc_neurons, num_classes)
+            self.net = mobilenet_v3_small('DEFAULT')
+            self.net.classifier[-1] = nn.Linear(1024, cfg.fc_neurons)
         elif cfg.arch == 'densenet':
-            self.net = densenet121(weights='DEFAULT')
-            self.net.classifier = nn.Linear(cfg.fc_neurons, num_classes)
+            self.net = densenet121('DEFAULT')
+            self.net.classifier = nn.Linear(1024, cfg.fc_neurons)
         else:
             raise ValueError("Architecture should be either 'resnet', 'mobilenet' or 'densenet'.")
+        
+        self.out = nn.Linear(cfg.fc_neurons, num_classes)
 
     def forward(self, x):
         x = self.net(x)
+        x = F.dropout(x, p=0.3, training=self.training)
+        x = F.relu(x)
+        x = self.out(x)
         return F.log_softmax(x, dim=1)
 
     def training_step(self, batch, batch_idx):
