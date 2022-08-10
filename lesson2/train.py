@@ -26,7 +26,7 @@ cfg.img_size = 224
 cfg.batch_size = 32
 cfg.lr = 0.0001
 cfg.arch = 'resnet'
-cfg.epochs = 5
+cfg.dropout_rate = 0.5
 cfg.fc_neurons = 128
 
 
@@ -85,7 +85,7 @@ class Model(pl.LightningModule):
 
     def forward(self, x):
         x = self.net(x)
-        x = F.dropout(x, p=0.3, training=self.training)
+        x = F.dropout(x, p=self.cfg.dropout_rate, training=self.training)
         x = F.relu(x)
         x = self.out(x)
         return F.log_softmax(x, dim=1)
@@ -134,12 +134,13 @@ class Model(pl.LightningModule):
 
       
 def train(cfg):
+    wandb_logger = WandbLogger(job_type='train-sweep', config=dict(cfg)
+    cfg = wandb_logger.config
     pl.seed_everything(seed=cfg.seed, workers=True)
-    wandb_logger = WandbLogger(job_type='train-sweep')
     dataset, train_dataset, val_dataset, test_dataset = load_data(cfg)
     model = Model(cfg, dataset, train_dataset, val_dataset, test_dataset)
     trainer = pl.Trainer(
-        max_epochs=cfg.epochs,
+        max_epochs=10,
         accelerator='auto',
         deterministic=True,
         logger=wandb_logger)
