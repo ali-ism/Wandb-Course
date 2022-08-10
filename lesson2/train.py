@@ -33,7 +33,7 @@ cfg.fc_neurons = 128
 
 def load_data(cfg):
     transforms = Compose([Resize((cfg.img_size,cfg.img_size)), ToTensor()])
-    dataset = ImageFolder('garbage-project', transform=transforms)
+    dataset = ImageFolder(RAW_DATA_FOLDER, transform=transforms)
     dataset.idx_to_class = {v: k for k, v in dataset.class_to_idx.items()}
     train_indices, test_indices, y_train, _ = train_test_split(
         range(len(dataset)),
