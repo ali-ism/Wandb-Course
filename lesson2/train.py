@@ -137,7 +137,7 @@ def train(cfg):
     pl.seed_everything(seed=cfg.seed, workers=True)
     wandb_logger = WandbLogger(job_type='train-sweep')
     dataset, train_dataset, val_dataset, test_dataset = load_data(cfg)
-    model = Model(cfg, dataset)
+    model = Model(cfg, dataset, train_dataset, val_dataset, test_dataset)
     trainer = pl.Trainer(
         max_epochs=cfg.epochs,
         accelerator='auto',
