@@ -134,8 +134,8 @@ class Model(pl.LightningModule):
 
       
 def train(cfg):
-    wandb_logger = WandbLogger(job_type='train-sweep', config=dict(cfg)
-    cfg = wandb_logger.config
+    wandb_logger = WandbLogger(job_type='train-sweep', config=dict(cfg))
+    cfg = wandb.config
     pl.seed_everything(seed=cfg.seed, workers=True)
     dataset, train_dataset, val_dataset, test_dataset = load_data(cfg)
     model = Model(cfg, dataset, train_dataset, val_dataset, test_dataset)
