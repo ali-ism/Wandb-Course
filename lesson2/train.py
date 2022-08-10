@@ -142,7 +142,6 @@ def train(cfg):
     model = Model(cfg, dataset, train_dataset, val_dataset, test_dataset)
     trainer = pl.Trainer(
         max_epochs=cfg.epochs,
-        log_every_n_steps=20,
         accelerator='auto',
         deterministic=True,
         logger=wandb_logger)
