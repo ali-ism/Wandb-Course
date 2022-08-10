@@ -11,7 +11,7 @@ parameters:
     img_size:
       values: [128, 224, 512]
     batch_size:
-      values': [16, 32, 64, 128, 256]
+      values: [16, 32, 64, 128, 256]
     lr:
       distribution: log_uniform_values
       min: 1e-5
