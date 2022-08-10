@@ -19,7 +19,7 @@ from pytorch_lightning.loggers import WandbLogger
 PROJECT_NAME = 'garbage-project'
 RAW_DATA_FOLDER = '../input/garbage-classification/Garbage classification/Garbage classification/'
 
-#hyperparameters
+#default hyperparameters
 cfg = config_dict.ConfigDict()
 cfg.seed = 1
 cfg.img_size = 224
@@ -27,7 +27,6 @@ cfg.batch_size = 32
 cfg.lr = 0.0001
 cfg.arch = 'resnet'
 cfg.epochs = 5
-cfg.fc_layers = 1
 cfg.fc_neurons = 128
 
 
