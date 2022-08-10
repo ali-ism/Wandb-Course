@@ -1,5 +1,6 @@
 program: train.py
 project: garbage-project
+entity: ali-ism
 method: random
 metric:
   name: val_f1
