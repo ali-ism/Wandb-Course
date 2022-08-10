@@ -58,23 +58,24 @@ def load_data(cfg):
 
 class Model(pl.LightningModule):
 
-    def __init__(self, cfg):
+    def __init__(self, cfg, dataset):
         super().__init__()
         self.cfg = cfg
-        self.f1_score = F1Score(num_classes=cfg.num_classes, average='macro')
+        num_classes = len(set(dataset.targets))
+        self.f1_score = F1Score(num_classes=num_classes, average='macro')
         self.class_weights = torch.Tensor(compute_class_weight(class_weight='balanced',
                                                                classes=np.unique(dataset.targets),
                                                                y=dataset.targets))
         
         if cfg.arch == 'resnet':
             self.net = resnet18(weights='DEFAULT')
-            self.net.fc = nn.Linear(cfg.fc_neurons, cfg.num_classes)
+            self.net.fc = nn.Linear(cfg.fc_neurons, num_classes)
         elif cfg.arch == 'mobilenet':
             self.net = mobilenet_v3_small(weights='DEFAULT')
-            self.net.classifier[-1] = nn.Linear(cfg.fc_neurons, cfg.num_classes)
+            self.net.classifier[-1] = nn.Linear(cfg.fc_neurons, num_classes)
         elif cfg.arch == 'densenet':
             self.net = densenet121(weights='DEFAULT')
-            self.net.classifier = nn.Linear(cfg.fc_neurons, cfg.num_classes)
+            self.net.classifier = nn.Linear(cfg.fc_neurons, num_classes)
         else:
             raise ValueError("Architecture should be either 'resnet', 'mobilenet' or 'densenet'.")
 
@@ -129,9 +130,7 @@ def train(cfg):
     pl.seed_everything(seed=cfg.seed, workers=True)
     wandb_logger = WandbLogger(job_type='train-sweep')
     dataset, train_dataset, val_dataset, test_dataset = load_data(cfg)
-    cfg.in_channels = dataset[0][0].shape[0]
-    cfg.num_classes = len(set(dataset.targets))
-    model = Model(cfg)
+    model = Model(cfg, dataset)
     trainer = pl.Trainer(
         max_epochs=cfg.epochs,
         accelerator='auto',
