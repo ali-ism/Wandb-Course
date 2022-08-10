@@ -27,6 +27,7 @@ cfg.batch_size = 32
 cfg.lr = 0.0001
 cfg.arch = 'resnet'
 cfg.dropout_rate = 0.5
+cfg.epochs = 5
 cfg.fc_neurons = 128
 
 
@@ -140,7 +141,8 @@ def train(cfg):
     dataset, train_dataset, val_dataset, test_dataset = load_data(cfg)
     model = Model(cfg, dataset, train_dataset, val_dataset, test_dataset)
     trainer = pl.Trainer(
-        max_epochs=10,
+        max_epochs=cfg.epochs,
+        log_every_n_steps=20,
         accelerator='auto',
         deterministic=True,
         logger=wandb_logger)
